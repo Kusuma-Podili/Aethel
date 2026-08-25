@@ -60,7 +60,7 @@ class GameRoom:
 
 if __name__ == "__main__":
     print("==================================================")
-    print("⚔️ Chronicles of Aethelgard - Game Simulation Server")
+    print("[SERVER] Chronicles of Aethelgard - Game Simulation Server")
     print("Running authoritative game loop on 30 Hz")
     print("==================================================")
     room = GameRoom()

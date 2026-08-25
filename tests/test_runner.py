@@ -8,9 +8,13 @@ import unittest
 import sys
 import os
 
+import unittest
+import sys
+import os
+
 def run_all_tests():
     print("=========================================================")
-    print("⚔️ Running Chronicles of Aethelgard Automated Test Suites")
+    print("[TEST RUNNER] Running Chronicles of Aethelgard Automated Test Suites")
     print("=========================================================")
 
     loader = unittest.TestLoader()
@@ -21,11 +25,11 @@ def run_all_tests():
 
     print("=========================================================")
     if result.wasSuccessful():
-        print(f"✅ ALL {result.testsRun} TEST CASES PASSED SUCCESSFULLY!")
+        print(f"[SUCCESS] ALL {result.testsRun} TEST CASES PASSED SUCCESSFULLY!")
         print("=========================================================")
         sys.exit(0)
     else:
-        print(f"❌ TEST SUITE FAILED with {len(result.failures)} failure(s) and {len(result.errors)} error(s).")
+        print(f"[FAILURE] TEST SUITE FAILED with {len(result.failures)} failure(s) and {len(result.errors)} error(s).")
         print("=========================================================")
         sys.exit(1)
 
