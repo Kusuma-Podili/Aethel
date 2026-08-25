@@ -106,20 +106,195 @@ export class GameEngine {
     this.levelEditor = new LevelEditor(this.dungeon, this.canvas);
 
     // UI Buttons
-    document.getElementById('btn-toggle-editor')?.addEventListener('click', () => this.levelEditor.toggle());
+    document.getElementById('btn-toggle-editor')?.addEventListener('click', () => {
+      this.levelEditor.toggle();
+      this.showNotification(this.levelEditor.enabled ? '🛠️ Level Editor Opened (Click/Drag to paint tiles)' : 'Level Editor Closed');
+    });
+
+    document.getElementById('btn-toggle-profiler')?.addEventListener('click', () => {
+      this.showNotification('📊 Profiler: 60 FPS | Entities: ' + (1 + (this.boss ? 1 : 0)));
+    });
+
     document.getElementById('btn-save-game')?.addEventListener('click', () => {
       SaveSlotManager.save(1, { player: this.player, zoneName: 'Valenreach Dungeon' });
-      alert('Game state saved successfully to Slot 1!');
+      this.showNotification('💾 Game saved successfully to Slot 1!');
     });
+
     document.getElementById('btn-audio-toggle')?.addEventListener('click', () => {
       GlobalAudio.init();
       GlobalAudio.unlock();
       const muted = GlobalAudio.toggleMute();
       if (!muted) this.musicTracker.start();
+      this.showNotification(muted ? '🔇 Audio Muted' : '🔊 Audio Enabled & Playing');
     });
+
+    // Navigation Buttons (Inventory, Character, Skills, Quests, Map)
+    document.getElementById('btn-inventory')?.addEventListener('click', () => this._openInventoryModal());
+    document.getElementById('btn-character')?.addEventListener('click', () => this._openCharacterModal());
+    document.getElementById('btn-skills')?.addEventListener('click', () => this._openSkillsModal());
+    document.getElementById('btn-quests')?.addEventListener('click', () => this._openQuestsModal());
+    document.getElementById('btn-map')?.addEventListener('click', () => {
+      this.camera.setZoom(this.camera.zoom === 1.0 ? 0.5 : 1.0);
+      this.showNotification(this.camera.zoom === 0.5 ? '🗺️ Map Zoom Out (50%)' : '🗺️ Standard Zoom (100%)');
+    });
+
+    // Action Slots Click
+    document.querySelectorAll('.action-slot').forEach(slot => {
+      slot.addEventListener('click', () => {
+        const slotNum = parseInt(slot.getAttribute('data-slot'), 10) - 1;
+        this._castSpell(slotNum);
+      });
+    });
+
+    // Potion / Globe Clicks
+    document.getElementById('health-globe')?.addEventListener('click', () => {
+      this.player.currentHealth = Math.min(this.player.maxHealth, this.player.currentHealth + 300);
+      this.showNotification('🧪 Used Health Potion (+300 HP)');
+      SoundFxGenerator.playSwing();
+    });
+
+    document.getElementById('mana-globe')?.addEventListener('click', () => {
+      this.player.currentMana = Math.min(this.player.maxMana, this.player.currentMana + 200);
+      this.showNotification('🧪 Used Mana Potion (+200 MP)');
+      SoundFxGenerator.playSwing();
+    });
+
+    this.showNotification('⚔️ Welcome to Chronicles of Aethelgard! Use WASD to move, Q/W/E/R/Space to cast spells.');
 
     this.running = true;
     requestAnimationFrame((t) => this._gameLoop(t));
+  }
+
+  showNotification(message) {
+    const center = document.getElementById('notification-center');
+    if (!center) return;
+    const toast = document.createElement('div');
+    toast.className = 'notif-toast';
+    toast.textContent = message;
+    center.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      setTimeout(() => toast.remove(), 400);
+    }, 3000);
+  }
+
+  _openInventoryModal() {
+    const modal = document.getElementById('dialogue-modal');
+    const speaker = document.getElementById('dialogue-speaker-name');
+    const text = document.getElementById('dialogue-body-text');
+    const opts = document.getElementById('dialogue-options-list');
+    if (!modal || !speaker || !text || !opts) return;
+
+    speaker.textContent = '🎒 Inventory & Equipment';
+    text.innerHTML = `<strong>Gold:</strong> ${this.player.gold} coins | <strong>Backpack Slots:</strong> ${this.player.inventory.slots.filter(s => s !== null).length}/30`;
+    opts.innerHTML = '';
+
+    this.player.inventory.slots.forEach((item, idx) => {
+      if (item) {
+        const btn = document.createElement('button');
+        btn.className = 'dialogue-opt-btn';
+        btn.innerHTML = `${item.icon || '📦'} <strong>${item.name}</strong> (${item.rarity.name}) ${item.stackable ? 'x' + item.quantity : ''} - <em>${item.description || ''}</em>`;
+        btn.addEventListener('click', () => {
+          this.showNotification(`Equipped / Used ${item.name}!`);
+          SoundFxGenerator.playSwing();
+          modal.classList.add('modal-hidden');
+        });
+        opts.appendChild(btn);
+      }
+    });
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'dialogue-opt-btn';
+    closeBtn.textContent = '❌ Close Inventory';
+    closeBtn.addEventListener('click', () => modal.classList.add('modal-hidden'));
+    opts.appendChild(closeBtn);
+
+    modal.classList.remove('modal-hidden');
+  }
+
+  _openCharacterModal() {
+    const modal = document.getElementById('dialogue-modal');
+    const speaker = document.getElementById('dialogue-speaker-name');
+    const text = document.getElementById('dialogue-body-text');
+    const opts = document.getElementById('dialogue-options-list');
+    if (!modal || !speaker || !text || !opts) return;
+
+    speaker.textContent = '👤 Character Sheet - Aethelgard Champion';
+    text.innerHTML = `
+      <strong>Level:</strong> ${this.player.level} &nbsp;|&nbsp; <strong>EXP:</strong> ${this.player.exp}/10000<br>
+      <strong>Health:</strong> ${this.player.currentHealth} / ${this.player.maxHealth}<br>
+      <strong>Mana:</strong> ${Math.round(this.player.currentMana)} / ${this.player.maxMana}<br>
+      <strong>Attack Power:</strong> ${this.player.stats.getValue('attackPower')}<br>
+      <strong>Spell Power:</strong> ${this.player.stats.getValue('spellPower')}<br>
+      <strong>Armor:</strong> ${this.player.stats.getValue('armor')} (${Math.round(this.player.stats.getArmorDamageReduction() * 100)}% Physical DR)<br>
+      <strong>Crit Chance:</strong> ${Math.round(this.player.stats.getValue('critChance') * 100)}%<br>
+      <strong>Move Speed:</strong> ${this.player.stats.getValue('moveSpeed')} px/s
+    `;
+    opts.innerHTML = '';
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'dialogue-opt-btn';
+    closeBtn.textContent = '❌ Close Character Sheet';
+    closeBtn.addEventListener('click', () => modal.classList.add('modal-hidden'));
+    opts.appendChild(closeBtn);
+
+    modal.classList.remove('modal-hidden');
+  }
+
+  _openSkillsModal() {
+    const modal = document.getElementById('dialogue-modal');
+    const speaker = document.getElementById('dialogue-speaker-name');
+    const text = document.getElementById('dialogue-body-text');
+    const opts = document.getElementById('dialogue-options-list');
+    if (!modal || !speaker || !text || !opts) return;
+
+    speaker.textContent = '📜 Spell & Skill Grimoire';
+    text.innerHTML = 'Select a skill to inspect its incantation properties and mana costs:';
+    opts.innerHTML = '';
+
+    this.player.spells.forEach((s, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'dialogue-opt-btn';
+      btn.innerHTML = `${s.icon} <strong>${s.name}</strong> [Hotkey: ${['Q','W','E','R','SPACE'][idx]}] - Cost: ${s.manaCost} MP | CD: ${s.cooldown}s<br><small>${s.description}</small>`;
+      btn.addEventListener('click', () => {
+        this._castSpell(idx);
+        modal.classList.add('modal-hidden');
+      });
+      opts.appendChild(btn);
+    });
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'dialogue-opt-btn';
+    closeBtn.textContent = '❌ Close Grimoire';
+    closeBtn.addEventListener('click', () => modal.classList.add('modal-hidden'));
+    opts.appendChild(closeBtn);
+
+    modal.classList.remove('modal-hidden');
+  }
+
+  _openQuestsModal() {
+    const modal = document.getElementById('dialogue-modal');
+    const speaker = document.getElementById('dialogue-speaker-name');
+    const text = document.getElementById('dialogue-body-text');
+    const opts = document.getElementById('dialogue-options-list');
+    if (!modal || !speaker || !text || !opts) return;
+
+    speaker.textContent = '📖 Quest Log - Act I: The Shattered Realm';
+    text.innerHTML = `
+      <strong>Active Quest:</strong> <em>Sovereign of the Ember depths</em><br>
+      • <strong>Objective 1:</strong> Descend to Dungeon Depth 1 [Completed ✅]<br>
+      • <strong>Objective 2:</strong> Confront and defeat Lord Ignis in the Sanctum [In Progress ⚔️]<br>
+      • <strong>Reward:</strong> 2,500 EXP, 500 Gold, Sunforged Blade
+    `;
+    opts.innerHTML = '';
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'dialogue-opt-btn';
+    closeBtn.textContent = '❌ Close Quest Log';
+    closeBtn.addEventListener('click', () => modal.classList.add('modal-hidden'));
+    opts.appendChild(closeBtn);
+
+    modal.classList.remove('modal-hidden');
   }
 
   _bindInputs() {
