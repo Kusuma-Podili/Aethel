@@ -1,0 +1,35 @@
+{
+  "name": "chronicles-of-aethelgard",
+  "version": "1.0.0",
+  "description": "Chronicles of Aethelgard: A Modular 50k+ LOC 2D/Isometric Action-RPG & Strategy Engine",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "python -m http.server 8080 --directory .",
+    "dev": "python -m http.server 8080 --directory .",
+    "server": "python server/game_server.py",
+    "test": "python tests/test_runner.py",
+    "test:ecs": "python -m unittest tests/test_ecs.py",
+    "test:physics": "python -m unittest tests/test_physics.py",
+    "test:pathfinding": "python -m unittest tests/test_pathfinding.py",
+    "test:worldgen": "python -m unittest tests/test_worldgen.py",
+    "test:gameplay": "python -m unittest tests/test_gameplay_economy.py",
+    "test:storage": "python -m unittest tests/test_storage_serialization.py",
+    "count-loc": "python -c \"import os; total=sum(len(open(os.path.join(r,f), encoding='utf-8', errors='ignore').readlines()) for r,d,files in os.walk('.') if not any(p in r for p in ['.git','__pycache__','node_modules']) for f in files if f.endswith(('.js','.py','.html','.css','.md','.json','.yml'))); print(f'Total Codebase LOC: {total}')\""
+  },
+  "keywords": [
+    "game-engine",
+    "action-rpg",
+    "isometric",
+    "ecs",
+    "physics-engine",
+    "procedural-generation",
+    "pathfinding",
+    "behavior-trees",
+    "webaudio-synth",
+    "webgl2",
+    "multiplayer-networking"
+  ],
+  "author": "Chronicles of Aethelgard Development Team",
+  "license": "MIT"
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chronicles of Aethelgard - Action-RPG & Strategy Engine</title>
+  <link rel="stylesheet" href="src/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="game-canvas" width="1280" height="720"></canvas>
+    
+    <!-- Game UI Layer -->
+    <div id="ui-layer">
+      <!-- Top Bar / Profiler -->
+      <header id="top-bar">
+        <div class="header-left">
+          <span class="game-title">⚔️ Chronicles of Aethelgard</span>
+          <span class="zone-badge" id="zone-display">Valenreach Forest - Depth 1</span>
+        </div>
+        <div class="header-center">
+          <span class="hud-stat" id="fps-display">FPS: 60</span>
+          <span class="hud-stat" id="entity-count-display">Entities: 0</span>
+          <span class="hud-stat" id="time-display">Time: 12:00 PM</span>
+        </div>
+        <div class="header-right">
+          <button id="btn-toggle-editor" class="game-btn btn-sm">🛠️ Level Editor</button>
+          <button id="btn-toggle-profiler" class="game-btn btn-sm">📊 Profiler</button>
+          <button id="btn-save-game" class="game-btn btn-sm">💾 Quick Save</button>
+          <button id="btn-audio-toggle" class="game-btn btn-sm">🔊 Audio</button>
+        </div>
+      </header>
+
+      <!-- Combat HUD Bottom Bar -->
+      <div id="hud-bottom">
+        <div class="globe-container">
+          <div class="globe health-globe" id="health-globe">
+            <div class="globe-fill" id="health-fill"></div>
+            <span class="globe-text" id="health-text">1000 / 1000</span>
+          </div>
+          <span class="globe-label">Health</span>
+        </div>
+
+        <div class="action-bar-container">
+          <div class="action-slots" id="action-slots">
+            <div class="action-slot" data-slot="1"><span class="key-bind">Q</span><div class="slot-icon" id="slot-1-icon">🔥</div><span class="cooldown-overlay" id="cd-1"></span></div>
+            <div class="action-slot" data-slot="2"><span class="key-bind">W</span><div class="slot-icon" id="slot-2-icon">⚡</div><span class="cooldown-overlay" id="cd-2"></span></div>
+            <div class="action-slot" data-slot="3"><span class="key-bind">E</span><div class="slot-icon" id="slot-3-icon">❄️</div><span class="cooldown-overlay" id="cd-3"></span></div>
+            <div class="action-slot" data-slot="4"><span class="key-bind">R</span><div class="slot-icon" id="slot-4-icon">🛡️</div><span class="cooldown-overlay" id="cd-4"></span></div>
+            <div class="action-slot" data-slot="5"><span class="key-bind">SPACE</span><div class="slot-icon" id="slot-5-icon">💨</div><span class="cooldown-overlay" id="cd-5"></span></div>
+          </div>
+          <div class="exp-bar-container">
+            <div class="exp-bar-fill" id="exp-fill" style="width: 35%;"></div>
+            <span class="exp-text" id="exp-text">Level 5 - 3,500 / 10,000 EXP</span>
+          </div>
+        </div>
+
+        <div class="globe-container">
+          <div class="globe mana-globe" id="mana-globe">
+            <div class="globe-fill" id="mana-fill"></div>
+            <span class="globe-text" id="mana-text">500 / 500</span>
+          </div>
+          <span class="globe-label">Mana</span>
+        </div>
+      </div>
+
+      <!-- Navigation & Minimap -->
+      <aside id="minimap-panel">
+        <canvas id="minimap-canvas" width="180" height="180"></canvas>
+        <div class="minimap-controls">
+          <button id="btn-inventory" class="game-btn btn-icon" title="Inventory (I)">🎒</button>
+          <button id="btn-character" class="game-btn btn-icon" title="Character (C)">👤</button>
+          <button id="btn-skills" class="game-btn btn-icon" title="Skills (K)">📜</button>
+          <button id="btn-quests" class="game-btn btn-icon" title="Quest Log (J)">📖</button>
+          <button id="btn-map" class="game-btn btn-icon" title="World Map (M)">🗺️</button>
+        </div>
+      </aside>
+
+      <!-- Floating Windows (Hidden by default) -->
+      <div id="window-container"></div>
+      
+      <!-- Notification Center -->
+      <div id="notification-center"></div>
+
+      <!-- Dialogue Modal -->
+      <div id="dialogue-modal" class="modal-hidden">
+        <div class="dialogue-box">
+          <div class="dialogue-speaker" id="dialogue-speaker-name">Elder Kenneth</div>
+          <p class="dialogue-text" id="dialogue-body-text">Welcome, traveler. The ancient seals of Aethelgard have shattered...</p>
+          <div class="dialogue-options" id="dialogue-options-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/index.js"></script>
+</body>
+</html>

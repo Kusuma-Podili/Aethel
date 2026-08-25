@@ -1,0 +1,31 @@
+name: CI Suite - Chronicles of Aethelgard
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run Engine & Game Test Suites
+        run: |
+          python tests/test_runner.py
+
+      - name: Verify Codebase LOC Metric (> 50,000 Lines of Code)
+        run: |
+          python -c "import os; total=sum(len(open(os.path.join(r,f), encoding='utf-8', errors='ignore').readlines()) for r,d,files in os.walk('.') if not any(p in r for p in ['.git','__pycache__','node_modules']) for f in files if f.endswith(('.js','.py','.html','.css','.md','.json','.yml'))); print(f'Validated Total Codebase LOC: {total}'); assert total >= 50000, f'LOC count {total} is below 50,000 threshold!'"
