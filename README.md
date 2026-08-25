@@ -1,93 +1,105 @@
-# ⚔️ Chronicles of Aethelgard - Modular Game Engine & Action-RPG
+# ⚔️ Chronicles of Aethelgard (Aethel)
 
-[![CI Suite](https://github.com/aethelgard/engine/actions/workflows/ci.yml/badge.svg)](https://github.com/aethelgard/engine/actions/workflows/ci.yml)
-[![Pages Deployment](https://github.com/aethelgard/engine/actions/workflows/deploy.yml/badge.svg)](https://github.com/aethelgard/engine/actions/workflows/deploy.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Codebase Size](https://img.shields.io/badge/Codebase-50k%2B%20LOC-blue.svg)](.)
+> **Proprietary & Confidential**. Copyright © 2026 Chronicles of Aethelgard Development Team. All rights reserved.
 
-**Chronicles of Aethelgard** is an enterprise-scale, high-performance 2D/Isometric Action-RPG, procedural dungeon crawler, and tactical strategy engine. Engineered with over **50,000+ lines of clean, modular code**, it implements a custom Archetype-based Entity Component System (ECS), Separating Axis Theorem (SAT) rigid body physics, Wave Function Collapse (WFC) world generation, Behavior Tree & GOAP artificial intelligence, WebAudio synthesis, and comprehensive multi-layer automated testing suites.
+An enterprise-scale 2D/Isometric Action-RPG and procedural dungeon simulation game engine built in TypeScript/JavaScript and Python.
 
 ---
 
-## 🌟 Key Architecture & Engine Systems
+## 📦 Dependencies
 
-1. **High-Performance ECS Core**:
-   - BitSet archetype indexing, memory object pooling, fast query filtering, and event buses.
-2. **Deterministic 2D Physics & Collision**:
-   - Separating Axis Theorem (SAT) convex polygon solver, GJK, continuous collision detection (CCD), swept AABB, and impulse manifolds.
-3. **Advanced Procedural World Generation**:
-   - Wave Function Collapse (WFC), 2D/3D Simplex & Perlin noise, BSP dungeon partitioning, Voronoi biomes, dynamic auto-tiling, and chunk streaming.
-4. **Autonomous AI & Navigation**:
-   - A*, Jump Point Search (JPS), Flow Field swarm pathfinding, Hierarchical Pathfinding (HPA*), composable Behavior Trees, and Goal-Oriented Action Planning (GOAP).
-5. **Deep RPG & Combat Mechanics**:
-   - Attribute modifiers (additive/multiplicative), elemental resistance matrices, affix/suffix loot generators, socketing, talent trees, spell channeling, and multi-phase bosses.
-6. **Procedural WebAudio Synthesizer**:
-   - ADSR envelope generators, FM synthesizers, noise filters, spatial 3D audio panning, and dynamic interactive music mixing.
-7. **In-Game World & Level Editor**:
-   - Real-time tile painting, collider brush, entity spawning, dynamic trigger placement, and JSON serialization.
-8. **Multiplayer Networking & State Sync**:
-   - WebSocket binary protocol, client-side prediction, entity interpolation, and server reconciliation.
-9. **Automated Test Suites**:
-   - 6+ distinct automated test modules verifying ECS performance, physics impulse conservation, pathfinding accuracy, procedural invariants, and economy balance.
+The project relies on standard web runtimes, Node.js, and Python 3.10+:
+
+### Manifest Dependencies
+* **Runtime**: HTML5 Canvas, WebGL2, WebAudio API, Python 3.10+
+* **Libraries**:
+  * `three` (v0.160.0) - 3D math and vector helpers
+  * `howler` (v2.2.4) - Audio pipeline fallback
+  * `gl-matrix` (v3.4.3) - High-performance matrix mathematics
+  * `simplex-noise` (v4.0.1) - Multi-octave procedural noise
+  * `eventemitter3` (v5.0.1) - High-speed event dispatcher
 
 ---
 
-## 🚀 Quick Start & Development
+## 🛠️ Installation
 
-### 1. Run the Game Client Locally
-Start the built-in HTTP server:
+### 1. Clone the Repository
 ```bash
-python -m http.server 8080
-```
-Open your browser and navigate to:
-```
-http://localhost:8080
+git clone https://github.com/Kusuma-Podili/Aethel.git
+cd Aethel
 ```
 
-### 2. Run the Multiplayer Simulation Server
+### 2. Install Node Dependencies
+```bash
+npm install
+```
+
+### 3. Setup Python Virtual Environment (Optional / Backend)
+```bash
+python -m venv venv
+# On Windows:
+.\venv\Scripts\activate
+# On Linux/macOS:
+source venv/bin/activate
+```
+
+---
+
+## 🏗️ Build
+
+To validate and build the production bundle:
+```bash
+npm run build
+```
+
+Or using Docker:
+```bash
+docker build -t aethel-game .
+```
+
+---
+
+## 🚀 Run
+
+### 1. Launch Game Client (Browser)
+Run the local HTTP server:
+```bash
+npm start
+# Or directly via Python:
+python -m http.server 8080 --directory .
+```
+Navigate to:
+👉 **[http://localhost:8080](http://localhost:8080)** (or open `index.html` directly)
+
+### 2. Launch Authoritative Multiplayer Simulation Server
 ```bash
 python server/game_server.py
 ```
 
-### 3. Run the Automated Test Suite
+### 3. Run Automated Test Suite
 ```bash
+npm test
+# Or:
 python tests/test_runner.py
-```
-Or run individual test modules:
-```bash
-python -m unittest tests/test_ecs.py
-python -m unittest tests/test_physics.py
-python -m unittest tests/test_pathfinding.py
-python -m unittest tests/test_worldgen.py
-python -m unittest tests/test_gameplay_economy.py
-python -m unittest tests/test_storage_serialization.py
 ```
 
 ---
 
-## 📂 Repository Structure
+## 🎮 Usage & Controls
 
-```
-├── .github/workflows/         # Automated CI/CD & GitHub Pages deploy
-├── docs/                      # Architecture, ECS, Physics & Modding Guides
-├── src/
-│   ├── core/                  # Math, Spatial Partitioning, ECS, Memory, Events
-│   ├── graphics/              # WebGL2 Pipeline, GLSL Shaders, Camera, Particles
-│   ├── physics/               # RigidBody2D, SAT Collision, GJK, Impulse Solvers
-│   ├── world/                 # Procedural Noise, WFC, BSP Dungeons, Tilemaps
-│   ├── gameplay/              # Stats, Combat, Spells, Items, Affixes, Quests
-│   ├── ai/                    # A*, Flow Fields, Behavior Trees, GOAP Planner
-│   ├── audio/                 # WebAudio Synthesizer, ADSR, Spatial Audio
-│   ├── ui/                    # HUD, Action Bars, Minimap, Level Editor
-│   ├── storage/               # Binary Encoder, Save Slot Manager
-│   ├── net/                   # Protocol, Client Prediction, Reconciliation
-│   └── index.js               # Application Bootstrap & Main Loop
-├── tests/                     # 6+ Full Engine & Gameplay Test Suites
-├── server/                    # Standalone Multiplayer & Game Server
-└── README.md
-```
+| Action | Control Key | Description |
+| :--- | :--- | :--- |
+| **Move Character** | `W`, `A`, `S`, `D` / `Arrow Keys` | Real-time 8-directional movement |
+| **Cast Fireball** | `Left Click` / `Q` | Primary explosive projectile |
+| **Cast Frost Nova** | `W` | Radial freezing burst (AoE) |
+| **Lightning Strike** | `E` | Thunder strike on cursor |
+| **Divine Barrier** | `R` | Holy shield absorbing damage |
+| **Shadow Blink** | `Spacebar` | Instant directional teleport |
+| **Level Editor** | `🛠️ Level Editor button` | Live dungeon tile painter |
+| **Inventory** | `🎒 button` or `I` | Equip weapons, armor & consumables |
+| **Character Sheet** | `👤 button` or `C` | Inspect attributes & resistances |
 
 ---
 
 ## 📜 License
-MIT License. Open-source and freely extensible for game developers and engine architects.
+**Proprietary / UNLICENSED**. Unauthorized copying, distribution, or modification of this software is strictly prohibited.
