@@ -448,9 +448,9 @@ export class GameEngine {
       for (let y = 0; y < this.dungeon.height; y++) {
         for (let x = 0; x < this.dungeon.width; x++) {
           const tile = this.dungeon.tiles[y * this.dungeon.width + x];
-          ctx.fillStyle = tile === 1 ? '#2c3e50' : '#1a252f'; // Wall vs Floor
+          ctx.fillStyle = tile === 1 ? '#f1c40f' : '#ffffff'; // Wall vs Floor
           ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
-          ctx.strokeStyle = '#141d26';
+          ctx.strokeStyle = '#f9e79f';
           ctx.strokeRect(x * tileSize, y * tileSize, tileSize, tileSize);
         }
       }
@@ -458,11 +458,11 @@ export class GameEngine {
 
     // 2. Render Boss
     if (this.boss && this.boss.currentHealth > 0) {
-      ctx.fillStyle = '#c0392b';
+      ctx.fillStyle = '#e67e22';
       ctx.beginPath();
       ctx.arc(this.boss.position.x, this.boss.position.y, this.boss.radius, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = '#e74c3c';
+      ctx.strokeStyle = '#f39c12';
       ctx.lineWidth = 3;
       ctx.stroke();
 
@@ -474,18 +474,18 @@ export class GameEngine {
 
       const hpBarW = 80;
       const hpRatio = this.boss.currentHealth / this.boss.maxHealth;
-      ctx.fillStyle = '#111';
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(this.boss.position.x - hpBarW / 2, this.boss.position.y - this.boss.radius - 8, hpBarW, 6);
       ctx.fillStyle = '#e74c3c';
       ctx.fillRect(this.boss.position.x - hpBarW / 2, this.boss.position.y - this.boss.radius - 8, hpBarW * hpRatio, 6);
     }
 
     // 3. Render Player
-    ctx.fillStyle = '#3498db';
+    ctx.fillStyle = '#f39c12';
     ctx.beginPath();
     ctx.arc(this.player.position.x, this.player.position.y, this.player.radius, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = '#f39c12';
+    ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 2;
     ctx.stroke();
 
